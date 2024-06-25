@@ -18,7 +18,15 @@ public:
    *
    * \param arr C array.
    */
-  Array(T const (&)[n]);
+  Array(T values[n]) 
+  {
+    memcpy(arr_, values, n * sizeof(T));
+  }
+
+  Array(const Array<T,n> &values) 
+  {
+    memcpy(arr_, values.arr_, n * sizeof(T));
+  }
 
   T& operator[](size_t const);
   T const& operator[](size_t const) const;
@@ -40,16 +48,16 @@ private:
 };
 
 
-template <class T, size_t n>
-template <class... Ts>
-Array<T, n>::Array(Ts... data) : arr_ {data...} {}
+// template <class T, size_t n>
+// template <class... Ts>
+// Array<T, n>::Array(Ts... data) : arr_ {data...} {}
 
-template <class T, size_t n>
-Array<T, n>::Array(T const (&arr)[n]) {
-  for (size_t i {0}; i < n; ++i) {
-    arr_[i] = arr[i];
-  }
-}
+// template <class T, size_t n>
+// Array<T, n>::Array(T const (&arr)[n]) {
+//   for (size_t i {0}; i < n; ++i) {
+//     arr_[i] = arr[i];
+//   }
+// }
 
 
 template <class T, size_t n>

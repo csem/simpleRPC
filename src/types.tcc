@@ -5,6 +5,8 @@
 #include "vector.tcc"
 #include "array.tcc"
 #include "rolling_buffer.tcc"
+#include <PString.h>
+#include <TString.tcc>
 
 //! \defgroup types
 
@@ -88,6 +90,19 @@ inline void rpcTypeOf(Stream& io, String&) {
 /*! \ingroup types
  * \copydoc rpcTypeOf(Stream&, bool) */
 inline void rpcTypeOf(Stream& io, char*) {
+  rpcPrint(io, 's');
+}
+
+/*! \ingroup types
+ * \copydoc rpcTypeOf(Stream&, bool) */
+template<size_t S> 
+inline void rpcTypeOf(Stream& io, TString<S>) {
+  rpcPrint(io, 's');
+}
+
+/*! \ingroup types
+ * \copydoc rpcTypeOf(Stream&, bool) */
+inline void rpcTypeOf(Stream& io, PString) {
   rpcPrint(io, 's');
 }
 

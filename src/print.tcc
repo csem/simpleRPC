@@ -1,6 +1,8 @@
 #pragma once
 
 #include "defs.h"
+#include <PString.h>
+#include <TString.tcc>
 
 //! \defgroup print
 
@@ -44,6 +46,17 @@ inline void rpcPrint(Stream& io, __FlashStringHelper const* data) {
   for (uint8_t c {pgm_read_byte(p)}; c; c = pgm_read_byte(++p)) {
     rpcPrint(io, c);
   }
+}
+
+inline void rpcPrint(Stream& io, PString& data)
+{
+  rpcPrint(io, (const char*)data);
+}
+
+template<size_t S>
+void rpcPrint(Stream& io, TString<S>& data)
+{
+  rpcPrint(io, (const char*)data);
 }
 
 

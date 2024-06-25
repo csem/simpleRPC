@@ -1,0 +1,13 @@
+{
+  "name": "simpleRpc",
+  "keywords": "rpc",
+  "version": "3.0.0",
+  "export": {
+    "include": ["src", "examples", "LICENSE.txt"]
+  },
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "libArchive": false
+  }
+}

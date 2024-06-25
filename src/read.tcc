@@ -4,6 +4,8 @@
 #include "tuple.tcc"
 #include "vector.tcc"
 #include "array.tcc"
+#include <PString.h>
+#include <TString.tcc>
 
 //! \defgroup read
 
@@ -57,6 +59,35 @@ inline void rpcRead(Stream& io, String* data) {
   rpcRead(io, &character);
 
   while (character) {
+    *data += character;
+    rpcRead(io, &character);
+  }
+}
+
+/*! \ingroup read
+ * \copydoc rpcRead(Stream&, T*) */
+template<size_t S>
+inline void rpcRead(Stream& io, TString<S>* data)
+{
+  char character;
+  rpcRead(io, &character);
+
+  while (character)
+  {
+    *data += character;
+    rpcRead(io, &character);
+  }
+}
+
+/*! \ingroup read
+ * \copydoc rpcRead(Stream&, T*) */
+inline void rpcRead(Stream& io, PString* data)
+{
+  char character;
+  rpcRead(io, &character);
+
+  while (character)
+  {
     *data += character;
     rpcRead(io, &character);
   }

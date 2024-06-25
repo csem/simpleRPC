@@ -5,6 +5,8 @@
 #include "vector.tcc"
 #include "array.tcc"
 #include "rolling_buffer.tcc"
+#include <PString.h>
+#include <TString.tcc>
 
 //! \defgroup write
 
@@ -39,6 +41,22 @@ inline void rpcWrite(Stream& io, String* data) {
   rpcPrint(io, *data, '\0');
 }
 
+/*! \ingroup write
+ * \copydoc rpcWrite(Stream&, T*) */
+inline void rpcWrite(Stream& io, PString* data)
+{
+  const char* str = *data;
+  rpcPrint(io, str);
+}
+
+/*! \ingroup write
+ * \copydoc rpcWrite(Stream&, T*) */
+template<size_t S>
+inline void rpcWrite(Stream& io, TString<S>* data)
+{
+  const char* str = *data;
+  rpcPrint(io, str);
+}
 
 /*! \ingroup write
  * \copydoc rpcWrite(Stream&, T*) */
