@@ -6,9 +6,10 @@
 #include "array.tcc"
 #include <PString.h>
 #include <TString.tcc>
+#include <vector>
+#include <cstring> // for memcpy
 
 //! \defgroup read
-
 
 /*! \ingroup read
  * Read a value from an stream.
@@ -24,25 +25,23 @@ void rpcRead(Stream& io, T* data) {
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
 template <class T>
-inline void rpcRead(Stream& io, T const* data) {  // TODO write analogue?
+inline void rpcRead(Stream& io, T const* data) {
   rpcRead(io, const_cast<T*>(data));
 }
-
 
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
 inline void rpcRead(Stream& io, char** data) {
-  *data = new char[1];
-  rpcRead(io, *data);
+  std::vector<char> buffer;
+  char character;
 
-  for (size_t size {1}; (*data)[size - 1]; ++size) {
-    char* data_ {new char[size + 1]};
-    memcpy(data_, *data, size);
-    delete[] *data;
-    *data = data_;
+  // Read characters until null terminator is found
+  do {
+    rpcRead(io, &character);
+    buffer.push_back(character);
+  } while (character != '\0');
 
-    rpcRead(io, *data + size);
-  }
+  *data = buffer.data();  // Assign raw pointer from vector
 }
 
 /*! \ingroup read
@@ -67,13 +66,11 @@ inline void rpcRead(Stream& io, String* data) {
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
 template<size_t S>
-inline void rpcRead(Stream& io, TString<S>* data)
-{
+inline void rpcRead(Stream& io, TString<S>* data) {
   char character;
   rpcRead(io, &character);
 
-  while (character)
-  {
+  while (character) {
     *data += character;
     rpcRead(io, &character);
   }
@@ -81,18 +78,15 @@ inline void rpcRead(Stream& io, TString<S>* data)
 
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
-inline void rpcRead(Stream& io, PString* data)
-{
+inline void rpcRead(Stream& io, PString* data) {
   char character;
   rpcRead(io, &character);
 
-  while (character)
-  {
+  while (character) {
     *data += character;
     rpcRead(io, &character);
   }
 }
-
 
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
@@ -101,8 +95,8 @@ void rpcRead(Stream& io, Vector<T>* data) {
   size_t size;
   rpcRead(io, &size);
 
-  (*data).resize(size);
-  for (size_t i {0}; i < (*data).size(); ++i) {
+  data->resize(size);
+  for (size_t i = 0; i < data->size(); ++i) {
     rpcRead(io, &(*data)[i]);
   }
 }
@@ -114,10 +108,12 @@ void rpcRead(Stream& io, T** data) {
   size_t size;
   rpcRead(io, &size);
 
-  *data = new T[size];
-  for (size_t i {0}; i < size; ++i) {
-    rpcRead(io, *data + i);
+  std::vector<T> buffer(size);
+  for (size_t i = 0; i < size; ++i) {
+    rpcRead(io, &buffer[i]);
   }
+
+  *data = buffer.data();  // Assign raw pointer from vector
 }
 
 /*! \ingroup read
@@ -127,7 +123,7 @@ void rpcRead(Stream& io, Array<T, n>* data) {
   size_t size;
   rpcRead(io, &size);
 
-  for (size_t i {0}; i < min(size, n); ++i) {
+  for (size_t i = 0; i < std::min(size, n); ++i) {
     rpcRead(io, &(*data)[i]);
   }
 }
@@ -144,16 +140,16 @@ void rpcRead(Stream& io, T const** data) {
 template <class T>
 void rpcRead(Stream& io, T*** data) {
   size_t size;
-
   rpcRead(io, &size);
-  *data = new T*[size + 1];
 
-  for (size_t i {0}; i < size; ++i) {
-    rpcRead(io, *data + i);
+  std::vector<T*> buffer(size + 1);
+  for (size_t i = 0; i < size; ++i) {
+    rpcRead(io, &buffer[i]);
   }
-  (*data)[size] = nullptr;
-}
+  buffer[size] = nullptr;
 
+  *data = buffer.data();  // Assign raw pointer from vector
+}
 
 //! Recursion terminator for `rpcRead(Tuple*)`.
 inline void rpcRead(Stream&, Tuple<>*) {}
