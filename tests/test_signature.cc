@@ -41,29 +41,3 @@ TEST_CASE("Tuples", "[signature][object]") {
   signature(Serial, f1);
   REQUIRE(Serial.inspect<String>() == ": (ic) f(ic): f");
 }
-
-TEST_CASE("Vectors", "[signature][vector]") {
-  void (*f0)(Vector<int>, float) {};
-  Vector<int> (*f1)(float) {};
-  int (*f2)(Vector<signed char>&, int) {};
-
-  Serial.reset();
-  signature(Serial, f0);
-  signature(Serial, f1);
-  signature(Serial, f2);
-  REQUIRE(Serial.inspect<String>() == ": [i] f[i]: fi: [b] i");
-}
-
-TEST_CASE("C vectors", "[signature][vector]") {
-  void (*f0)(int*, float) {};
-  int* (*f1)(float) {};
-  int (*f2)(signed char*, int) {};
-  void (*f3)(int**) {};
-
-  Serial.reset();
-  signature(Serial, f0);
-  signature(Serial, f1);
-  signature(Serial, f2);
-  signature(Serial, f3);
-  REQUIRE(Serial.inspect<String>() == ": [i] f[i]: fi: [b] i: [[i]]");
-}

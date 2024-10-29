@@ -72,34 +72,6 @@ inline void rpcRead(Stream& io, PString* data) {
 
 /*! \ingroup read
  * \copydoc rpcRead(Stream&, T*) */
-template <class T>
-void rpcRead(Stream& io, Vector<T>* data) {
-  size_t size;
-  rpcRead(io, &size);
-
-  data->resize(size);
-  for (size_t i = 0; i < data->size(); ++i) {
-    rpcRead(io, &(*data)[i]);
-  }
-}
-
-/*! \ingroup read
- * \copydoc rpcRead(Stream&, T*) */
-template <class T>
-void rpcRead(Stream& io, T** data) {
-  size_t size;
-  rpcRead(io, &size);
-
-  std::vector<T> buffer(size);
-  for (size_t i = 0; i < size; ++i) {
-    rpcRead(io, &buffer[i]);
-  }
-
-  *data = buffer.data();  // Assign raw pointer from vector
-}
-
-/*! \ingroup read
- * \copydoc rpcRead(Stream&, T*) */
 template <class T, size_t n>
 void rpcRead(Stream& io, Array<T, n>* data) {
   size_t size;

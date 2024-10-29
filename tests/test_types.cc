@@ -100,20 +100,6 @@ TEST_CASE("Complex Tuple types", "[types][object]") {
   REQUIRE(Serial.inspect<String>() == "((ci)L)(((ccc)c)c((cc)(c)))");
 }
 
-TEST_CASE("Vector", "[types][vector]") {
-  Vector<int> v0 {};
-  Vector<float> v1 {};
-  Vector<signed char> v2 {};
-  Vector<Vector<int>> v3 {};
-
-  Serial.reset();
-  rpcTypeOf(Serial, v0);
-  rpcTypeOf(Serial, v1);
-  rpcTypeOf(Serial, v2);
-  rpcTypeOf(Serial, v3);
-  REQUIRE(Serial.inspect<String>() == "[i][f][b][[i]]");
-}
-
 TEST_CASE("Array", "[types][array]") {
   Array<int, 2> a {};
 
@@ -122,38 +108,4 @@ TEST_CASE("Array", "[types][array]") {
   REQUIRE(Serial.inspect<char>() == '[');
   REQUIRE(Serial.inspect<size_t>() == 2);
   REQUIRE(Serial.inspect<String>() == "i]");
-}
-
-TEST_CASE("Complex tuple types", "[types][tuple][complex]") {
-  Tuple<Vector<int>, char> t0 {};
-  Tuple<Tuple<int, char>, Tuple<unsigned char, float>> t1 {};
-  Tuple<Tuple<int, char>, Vector<int>> t2 {};
-
-  Serial.reset();
-  rpcTypeOf(Serial, t0);
-  rpcTypeOf(Serial, t1);
-  rpcTypeOf(Serial, t2);
-  REQUIRE(Serial.inspect<String>() == "([i]c)((ic)(Bf))((ic)[i])");
-}
-
-TEST_CASE("Complex object types", "[types][object][complex]") {
-  Tuple<Vector<Tuple<int, char>>, Tuple<float>> o0 {};
-  Tuple<Tuple<int, char>, Tuple<char>> o1 {};
-
-  Serial.reset();
-  rpcTypeOf(Serial, o0);
-  rpcTypeOf(Serial, o1);
-  REQUIRE(Serial.inspect<String>() == "([(ic)](f))((ic)(c))");
-}
-
-TEST_CASE("Complex vector types", "[types][vector][complex]") {
-  Vector<Tuple<int, char>> v0 {};
-  Vector<Tuple<int, Vector<char>>> v1 {};
-  Vector<Tuple<char, Tuple<int, char>>> v2 {};
-
-  Serial.reset();
-  rpcTypeOf(Serial, v0);
-  rpcTypeOf(Serial, v1);
-  rpcTypeOf(Serial, v2);
-  REQUIRE(Serial.inspect<String>() == "[(ic)][(i[c])][(c(ic))]");
 }

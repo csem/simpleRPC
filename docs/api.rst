@@ -8,7 +8,6 @@ API documentation
 
    api/interface
    api/tuple
-   api/vector
    api/io
    api/types
    api/signature

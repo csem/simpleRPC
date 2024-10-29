@@ -244,87 +244,6 @@ TEST_CASE("RPC call function with C string types", "[call][string]") {
   REQUIRE(Serial.rx == sizeof(int) + 8);
 }
 
-TEST_CASE("RPC call function with Tuple types", "[call][tuple]") {
-  struct S {
-    static void f0(Tuple<int, char>) {}
-    static Tuple<int, char> f1() {
-      Tuple<int, char> t {1234, 'x'};
-
-      return t;
-    }
-    static void f2(Tuple<int, Vector<char>>&) {}
-  };
-
-  // Void function, parameter is of type Tuple.
-  Serial.reset();
-  Serial.prepare(1234, 'x');
-  rpcCall(Serial, S::f0);
-  REQUIRE(Serial.rx == sizeof(int) + sizeof(char));
-  REQUIRE(Serial.tx == 0);
-
-  // Function with return type Tuple.
-  Serial.reset();
-  rpcCall(Serial, S::f1);
-  REQUIRE(Serial.inspect<int>() == 1234);
-  REQUIRE(Serial.inspect<char>() == 'x');
-  REQUIRE(Serial.rx == 0);
-  REQUIRE(Serial.tx == sizeof(int) + sizeof(char));
-
-  Serial.reset();
-  Serial.prepare(1234, 2ul, 'x', 'y');
-  rpcCall(Serial, S::f2);
-  REQUIRE(Serial.rx == sizeof(int) + sizeof(size_t) + 2 * sizeof(char));
-  REQUIRE(Serial.tx == 0);
-}
-
-TEST_CASE("RPC call function with Vector types", "[call][vector]") {
-  struct S {
-    static bool f0(Vector<int>& v) {
-      if (v.size() != 2 || v[0] != 1234 || v[1] != 2345) {
-        return false;
-      }
-      return true;
-    }
-    static Vector<int> f1() {
-      Vector<int> v {{1234, 2345}};
-      return v;
-    }
-    static void f2(Tuple<Vector<int>, char>&) {}
-    static int f3(Vector<signed char>&, int) {
-      return 1;
-    }
-  };
-
-  // Boolean function, parameter is of type Vector.
-  Serial.reset();
-  Serial.prepare(2ul, 1234, 2345);
-  rpcCall(Serial, S::f0);
-  REQUIRE(Serial.inspect<bool>());
-  REQUIRE(Serial.rx == sizeof(size_t) + 2 * sizeof(int));
-  REQUIRE(Serial.tx == 1);
-
-  // Function with return type Vector.
-  Serial.reset();
-  rpcCall(Serial, S::f1);
-  REQUIRE(Serial.inspect<size_t>() == 2);
-  REQUIRE(Serial.inspect<int>() == 1234);
-  REQUIRE(Serial.inspect<int>() == 2345);
-  REQUIRE(Serial.rx == 0);
-  REQUIRE(Serial.tx == sizeof(size_t) + 2 * sizeof(int));
-
-  Serial.reset();
-  Serial.prepare(2ul, 1234, 2345, 'c');
-  rpcCall(Serial, S::f2);
-  REQUIRE(Serial.rx == sizeof(size_t) + 2 * sizeof(int) + sizeof(char));
-  REQUIRE(Serial.tx == 0);
-
-  Serial.reset();
-  Serial.prepare(2ul, (signed char)12, (signed char)23, 10);
-  rpcCall(Serial, S::f3);
-  REQUIRE(Serial.rx == sizeof(size_t) + 2 * sizeof(signed char) + sizeof(int));
-  REQUIRE(Serial.tx == sizeof(int));
-}
-
 TEST_CASE("RPC call function with Array types", "[call][array]") {
   struct S {
     static Array<int, 2> f() {
@@ -339,51 +258,6 @@ TEST_CASE("RPC call function with Array types", "[call][array]") {
   REQUIRE(Serial.inspect<int>() == 2345);
   REQUIRE(Serial.rx == 0);
   REQUIRE(Serial.tx == sizeof(size_t) + 2 * sizeof(int));
-}
-
-TEST_CASE("RPC call function with C array types", "[call][array]") {
-  struct S {
-    static void f0(int*) {}
-    static void f1(int**) {}
-    static void f2(int const*) {}
-    static void f3(int const**) {}
-    static void f4(int***) {}
-    static void f5(int****) {}
-  };
-
-  // Vector function, parameter is of type C vector.
-  Serial.reset();
-  Serial.prepare(2ul, 1234, 2345);
-  rpcCall(Serial, S::f0);
-  REQUIRE(Serial.rx == sizeof(size_t) + 2 * sizeof(int));
-
-  // Vector function, parameter is of type C 2-d vector.
-  Serial.reset();
-  Serial.prepare(2ul, 2ul, 1234, 2345, 2ul, 3456, 4567);
-  rpcCall(Serial, S::f1);
-  REQUIRE(Serial.rx == 3 * sizeof(size_t) + 4 * sizeof(int));
-
-  // Vector function, parameter is of type const C vector.
-  Serial.reset();
-  Serial.prepare(2ul, 1234, 2345);
-  rpcCall(Serial, S::f2);
-  REQUIRE(Serial.rx == sizeof(size_t) + 2 * sizeof(int));
-
-  // Vector function, parameter is of type const C 2-d vector.
-  Serial.reset();
-  Serial.prepare(2ul, 2ul, 1234, 2345, 2ul, 3456, 4567);
-  rpcCall(Serial, S::f3);
-  REQUIRE(Serial.rx == 3 * sizeof(size_t) + 4 * sizeof(int));
-
-  Serial.reset();
-  Serial.prepare(1ul, 1ul, 1ul, 1234);
-  rpcCall(Serial, S::f4);
-  REQUIRE(Serial.rx == 3 * sizeof(size_t) + sizeof(int));
-
-  Serial.reset();
-  Serial.prepare(1ul, 1ul, 1ul, 1ul, 1234);
-  rpcCall(Serial, S::f5);
-  REQUIRE(Serial.rx == 4 * sizeof(size_t) + sizeof(int));
 }
 
 TEST_CASE("RPC call class member functions", "[call][class]") {
