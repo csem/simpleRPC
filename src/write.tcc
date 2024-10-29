@@ -2,7 +2,6 @@
 
 #include "print.tcc"
 #include "tuple.tcc"
-#include "vector.tcc"
 #include "array.tcc"
 #include "rolling_buffer.tcc"
 #include <PString.h>
@@ -56,17 +55,6 @@ inline void rpcWrite(Stream& io, TString<S>* data)
 {
   const char* str = *data;
   rpcPrint(io, str);
-}
-
-/*! \ingroup write
- * \copydoc rpcWrite(Stream&, T*) */
-template <class T>
-void rpcWrite(Stream& io, Vector<T>* data) {
-  size_t size {(*data).size()};
-  rpcWrite(io, &size);
-  for (size_t i {0}; i < size; ++i) {
-    rpcWrite(io, &(*data)[i]);
-  }
 }
 
 /*! \ingroup write

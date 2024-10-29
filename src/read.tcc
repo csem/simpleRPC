@@ -2,11 +2,9 @@
 
 #include "defs.h"
 #include "tuple.tcc"
-#include "vector.tcc"
 #include "array.tcc"
 #include <PString.h>
 #include <TString.tcc>
-#include <vector>
 #include <cstring> // for memcpy
 
 //! \defgroup read

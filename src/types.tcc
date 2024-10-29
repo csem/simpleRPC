@@ -2,7 +2,6 @@
 
 #include "print.tcc"
 #include "tuple.tcc"
-#include "vector.tcc"
 #include "array.tcc"
 #include "rolling_buffer.tcc"
 #include <PString.h>
@@ -168,17 +167,6 @@ void rpcTypeOf(Stream& io, Tuple<Ts...>& t) {
   rpcPrint(io, '(');
   rpcTypeOf_(io, t);
   rpcPrint(io, ')');
-}
-
-
-/*! \ingroup types
- * \copydoc rpcTypeOf(Stream&, bool) */
-template <class T>
-void rpcTypeOf(Stream& io, Vector<T>&) {
-  rpcPrint(io, '[');
-  T x {};
-  rpcTypeOf(io, x);
-  rpcPrint(io, ']');
 }
 
 /*! \ingroup types
