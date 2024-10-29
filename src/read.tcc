@@ -5,7 +5,6 @@
 #include "array.tcc"
 #include <PString.h>
 #include <TString.tcc>
-#include <cstring> // for memcpy
 
 //! \defgroup read
 
@@ -25,21 +24,6 @@ void rpcRead(Stream& io, T* data) {
 template <class T>
 inline void rpcRead(Stream& io, T const* data) {
   rpcRead(io, const_cast<T*>(data));
-}
-
-/*! \ingroup read
- * \copydoc rpcRead(Stream&, T*) */
-inline void rpcRead(Stream& io, char** data) {
-  std::vector<char> buffer;
-  char character;
-
-  // Read characters until null terminator is found
-  do {
-    rpcRead(io, &character);
-    buffer.push_back(character);
-  } while (character != '\0');
-
-  *data = buffer.data();  // Assign raw pointer from vector
 }
 
 /*! \ingroup read
