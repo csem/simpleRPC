@@ -6,10 +6,6 @@
 #include <PString.h>
 #include <TString.tcc>
 
-#ifndef min
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif
-
 //! \defgroup read
 
 /*! \ingroup read
