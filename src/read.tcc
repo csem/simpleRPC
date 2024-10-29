@@ -6,6 +6,10 @@
 #include <PString.h>
 #include <TString.tcc>
 
+#ifndef min
+#define min(a,b) ((a)<(b)?(a):(b))
+#endif
+
 //! \defgroup read
 
 /*! \ingroup read
@@ -77,7 +81,7 @@ void rpcRead(Stream& io, Array<T, n>* data) {
   size_t size;
   rpcRead(io, &size);
 
-  for (size_t i = 0; i < std::min(size, n); ++i) {
+  for (size_t i = 0; i < min(size, n); ++i) {
     rpcRead(io, &(*data)[i]);
   }
 }
@@ -87,22 +91,6 @@ void rpcRead(Stream& io, Array<T, n>* data) {
 template <class T>
 void rpcRead(Stream& io, T const** data) {
   rpcRead(io, const_cast<T**>(data));
-}
-
-/*! \ingroup read
- * \copydoc rpcRead(Stream&, T*) */
-template <class T>
-void rpcRead(Stream& io, T*** data) {
-  size_t size;
-  rpcRead(io, &size);
-
-  std::vector<T*> buffer(size + 1);
-  for (size_t i = 0; i < size; ++i) {
-    rpcRead(io, &buffer[i]);
-  }
-  buffer[size] = nullptr;
-
-  *data = buffer.data();  // Assign raw pointer from vector
 }
 
 //! Recursion terminator for `rpcRead(Tuple*)`.
