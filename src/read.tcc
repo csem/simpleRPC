@@ -10,7 +10,7 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 #endif
 
-#define MAX_SIZE 128
+#define MAX_PTR_SIZE 128
 
 //! \defgroup read
 
