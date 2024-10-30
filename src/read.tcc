@@ -33,14 +33,14 @@ inline void rpcRead(Stream& io, T const* data) {
 }
 
 inline void rpcRead(Stream& io, char** data) {
-    static char buffer[MAX_SIZE];
+    static char buffer[MAX_PTR_SIZE];
     char character;
     size_t size = 0;
 
     // Read characters into buffer until null terminator or max size reached
     do {
         rpcRead(io, &character);
-        if (size < MAX_SIZE - 1) {  // Leave space for null terminator
+        if (size < MAX_PTR_SIZE - 1) {  // Leave space for null terminator
             buffer[size++] = character;
         } else {
             break;
@@ -104,12 +104,12 @@ inline void rpcRead(Stream& io, PString* data) {
  * \copydoc rpcRead(Stream&, T*) */
 template <class T>
 void rpcRead(Stream& io, T** data) {
-    static T buffer[MAX_SIZE];               // Fixed-size buffer
+    static T buffer[MAX_PTR_SIZE];               // Fixed-size buffer
 
     size_t size;
     rpcRead(io, &size);
 
-    size_t readSize = (size < MAX_SIZE) ? size : MAX_SIZE;
+    size_t readSize = (size < MAX_PTR_SIZE) ? size : MAX_PTR_SIZE;
 
     for (size_t i = 0; i < readSize; ++i) {
         rpcRead(io, &buffer[i]);
@@ -145,12 +145,12 @@ void rpcRead(Stream& io, T const** data) {
 
 template <class T>
 void rpcRead(Stream& io, T*** data) {
-    static T* buffer[MAX_SIZE + 1];          // Fixed-size buffer with space for nullptr terminator
+    static T* buffer[MAX_PTR_SIZE + 1];          // Fixed-size buffer with space for nullptr terminator
 
     size_t size;
     rpcRead(io, &size);
 
-    size_t readSize = (size < MAX_SIZE) ? size : MAX_SIZE;
+    size_t readSize = (size < MAX_PTR_SIZE) ? size : MAX_PTR_SIZE;
 
     // Read up to the fixed buffer limit
     for (size_t i = 0; i < readSize; ++i) {
